@@ -20,11 +20,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 EditText editText = (EditText) findViewById(R.id.editText);
-                TextView textView = new TextView();
-                textView.setText(editText.getText());
-                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
-                linearLayout.addView(textView);
-
+//                TextView textView = new TextView();
+//                textView.setText(editText.getText());
+//                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
+//                linearLayout.addView(textView);
+                String str = "test";
             }
         });
     }
