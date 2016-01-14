@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AndroidSample</string>
+    <string name="headTextView">plain text view</string>
+    <string name="submit">送信</string>
+</resources>
