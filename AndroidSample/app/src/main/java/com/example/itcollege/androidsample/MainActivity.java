@@ -7,8 +7,13 @@ import android.support.v4.app.LoaderManager;
 import android.view.View;
 import android.widget.*;
 
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
 public class MainActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<String> {
     int i = 0;
+    String text = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,13 +26,30 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
             public void onClick(View v) {
                 EditText editText = (EditText) findViewById(R.id.editText);
                 TextView textView = new TextView(getApplicationContext());
-                String text = editText.getText().toString();
+                text = editText.getText().toString();
+//                String text = editText.getText().toString();
                 textView.setText(text);
                 textView.setTextColor(Color.BLACK);
                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
                 linearLayout.addView(textView);
                 i++;
                 System.out.println(i);
+
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            InetAddress inetAddress = InetAddress.getByName("192.168.2.3");
+//                            DatagramSocket datagramSocket = new DatagramSocket();
+//                            byte buffer[] = text.getBytes();
+//                            DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, inetAddress, 4321);
+//                            datagramSocket.send(datagramPacket);
+////                            Toast.makeText(getApplicationContext(), "送信しました。", Toast.LENGTH_SHORT).show();
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }).start();
 
                 startAsyncLoadText(text);
             }

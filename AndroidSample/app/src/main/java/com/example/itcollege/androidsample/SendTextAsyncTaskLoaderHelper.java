@@ -13,14 +13,19 @@ public class SendTextAsyncTaskLoaderHelper extends AsyncTaskLoader<String> {
     public SendTextAsyncTaskLoaderHelper(Context context, String text) {
         super(context);
 
-        this.text = text;
         this.context = context;
+        this.text = text;
     }
 
     @Override
     public String loadInBackground() {
-        DatagramSender datagramSender = new DatagramSender("", 4321);
+        DatagramSender datagramSender = new DatagramSender("192.168.2.3", 4321);
         datagramSender.send(text);
         return "test";
+    }
+
+    @Override
+    protected void onStartLoading() {
+        forceLoad();
     }
 }
