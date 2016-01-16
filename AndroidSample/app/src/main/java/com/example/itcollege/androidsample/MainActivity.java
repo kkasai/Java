@@ -1,5 +1,6 @@
 package com.example.itcollege.androidsample;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,11 +22,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 EditText editText = (EditText) findViewById(R.id.editText);
-//                TextView textView = new TextView();
-//                textView.setText(editText.getText());
-//                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
-//                linearLayout.addView(textView);
-                String str = "test";
+                TextView textView = new TextView(getApplicationContext());
+                textView.setText(editText.getText().toString());
+                textView.setTextColor(Color.BLACK);
+                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
+                linearLayout.addView(textView);
+                i++;
+                System.out.println(i);
             }
         });
     }
