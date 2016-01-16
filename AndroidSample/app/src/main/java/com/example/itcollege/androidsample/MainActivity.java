@@ -1,15 +1,13 @@
 package com.example.itcollege.androidsample;
 
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.*;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<String> {
     int i = 0;
 
     @Override
@@ -23,14 +21,42 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 EditText editText = (EditText) findViewById(R.id.editText);
                 TextView textView = new TextView(getApplicationContext());
-                textView.setText(editText.getText().toString());
+                String text = editText.getText().toString();
+                textView.setText(text);
                 textView.setTextColor(Color.BLACK);
                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
                 linearLayout.addView(textView);
                 i++;
                 System.out.println(i);
+
+                startAsyncLoadText(text);
             }
         });
+    }
+
+    public void startAsyncLoadText(String text) {
+        Bundle args = new Bundle();
+        args.putString("text", text);
+        getSupportLoaderManager().initLoader(0, args, this);
+    }
+
+    @Override
+    public android.support.v4.content.Loader<String> onCreateLoader(int id, Bundle args) {
+        if(args != null) {
+            String text = args.getString("text");
+            return new SendTextAsyncTaskLoaderHelper(getApplicationContext(), text);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(android.support.v4.content.Loader<String> loader, String text) {
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLoaderReset(android.support.v4.content.Loader<String> loader) {
+
     }
 
 }
