@@ -7,10 +7,8 @@ import android.support.v4.app.LoaderManager;
 import android.view.View;
 import android.widget.*;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.io.*;
+import java.net.*;
 
 public class MainActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<String> {
     int i = 0;
@@ -41,50 +39,65 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                     @Override
                     public void run() {
                         try {
-                            InetAddress inetAddress = InetAddress.getByName("153.169.8.162");
-                            DatagramSocket datagramSocket = new DatagramSocket();
-                            byte buffer[] = text.getBytes();
-                            DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, inetAddress, 4321);
-                            datagramSocket.send(datagramPacket);
-//                            Toast.makeText(getApplicationContext(), "送信しました。", Toast.LENGTH_SHORT).show();
+                            Socket socket = new Socket("153.169.8.162", 12345);
+                            InputStream inputStream = socket.getInputStream();
+                            DataInputStream dataInputStream = new DataInputStream(inputStream);
+                            int i = dataInputStream.readInt();
+                            System.out.println(i);
+                            dataInputStream.close();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                 }).start();
 
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            InetAddress inetAddress = InetAddress.getByName("153.169.8.162");
+//                            DatagramSocket datagramSocket = new DatagramSocket();
+//                            byte buffer[] = text.getBytes();
+//                            DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, inetAddress, 4321);
+//                            datagramSocket.send(datagramPacket);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }).start();
+
 //                startAsyncLoadText(text);
             }
         });
 
         // AsyncTaskにするべきかも
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    DatagramSocket datagramSocket = new DatagramSocket(43210);
-                    byte buffer[] = new byte[1024];
-                    while (true) {
-                        DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
-                        datagramSocket.receive(datagramPacket);
-                        str = new String(datagramPacket.getData(), "UTF-8");
-                        System.out.println(str);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                TextView textView = new TextView(getApplicationContext());
-                                textView.setText(str);
-                                textView.setTextColor(Color.BLACK);
-                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
-                                linearLayout.addView(textView);
-                            }
-                        });
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    DatagramSocket datagramSocket = new DatagramSocket(43210);
+//                    byte buffer[] = new byte[1024];
+//                    while (true) {
+//                        DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
+//                        datagramSocket.receive(datagramPacket);
+//                        str = new String(datagramPacket.getData(), "UTF-8");
+//                        System.out.println(str);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                TextView textView = new TextView(getApplicationContext());
+//                                textView.setText(str);
+//                                textView.setTextColor(Color.BLACK);
+//                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
+//                                linearLayout.addView(textView);
+//                            }
+//                        });
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
 
 //        serverStartAsyncLoadText();
     }
