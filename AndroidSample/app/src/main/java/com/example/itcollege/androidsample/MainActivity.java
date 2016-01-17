@@ -15,6 +15,7 @@ import java.net.SocketException;
 public class MainActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<String> {
     int i = 0;
     String text = "";
+    String str = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,7 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                     @Override
                     public void run() {
                         try {
-                            InetAddress inetAddress = InetAddress.getByName("192.168.137.1");
+                            InetAddress inetAddress = InetAddress.getByName("153.169.8.162");
                             DatagramSocket datagramSocket = new DatagramSocket();
                             byte buffer[] = text.getBytes();
                             DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, inetAddress, 4321);
@@ -66,12 +67,18 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                     while (true) {
                         DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
                         datagramSocket.receive(datagramPacket);
-                        String str = new String(datagramPacket.getData(), "UTF-8");
-                        TextView textView = new TextView(getApplicationContext());
-                        textView.setText(str);
-                        textView.setTextColor(Color.BLACK);
-                        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
-                        linearLayout.addView(textView);
+                        str = new String(datagramPacket.getData(), "UTF-8");
+                        System.out.println(str);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView textView = new TextView(getApplicationContext());
+                                textView.setText(str);
+                                textView.setTextColor(Color.BLACK);
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
+                                linearLayout.addView(textView);
+                            }
+                        });
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

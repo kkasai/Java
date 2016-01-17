@@ -10,11 +10,11 @@ import java.net.UnknownHostException;
  */
 public class DatagramSender {
     public static void main(String args[]) {
-        int port = 4321;
+        int port = 43210;
 
         try {
-//            InetAddress inetAddress = InetAddress.getByName("");
-            InetAddress inetAddress = InetAddress.getLoopbackAddress();
+            InetAddress inetAddress = InetAddress.getByName("49.98.133.229");
+//            InetAddress inetAddress = InetAddress.getLoopbackAddress();
             DatagramSocket datagramSocket = new DatagramSocket();
             byte buffer[] = "bbbaaaaaaaaaaaaaa".getBytes();
             DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, inetAddress, port);
