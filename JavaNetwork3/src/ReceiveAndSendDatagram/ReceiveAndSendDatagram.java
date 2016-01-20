@@ -1,9 +1,6 @@
 package ReceiveAndSendDatagram;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.*;
 
 /**
@@ -12,9 +9,24 @@ import java.net.*;
 public class ReceiveAndSendDatagram {
     public static void main (String args[]) {
 
-        connectedSocket();
+//        connectedSocket();
+        clientSocket();
 
         messageReceive();
+
+    }
+
+    public static void clientSocket() {
+        try {
+            Socket socket = new Socket("", 12345);
+            InputStream inputStream = socket.getInputStream();
+            DataInputStream dataInputStream = new DataInputStream(inputStream);
+            int i = dataInputStream.readInt();
+            System.out.println(i);
+            dataInputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

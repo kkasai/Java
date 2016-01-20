@@ -35,71 +35,103 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                 i++;
                 System.out.println(i);
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Socket socket = new Socket("153.169.8.162", 12345);
-                            InputStream inputStream = socket.getInputStream();
-                            DataInputStream dataInputStream = new DataInputStream(inputStream);
-                            int i = dataInputStream.readInt();
-                            System.out.println(i);
-                            dataInputStream.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            InetAddress inetAddress = InetAddress.getByName("153.169.8.162");
-//                            DatagramSocket datagramSocket = new DatagramSocket();
-//                            byte buffer[] = text.getBytes();
-//                            DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, inetAddress, 4321);
-//                            datagramSocket.send(datagramPacket);
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }).start();
-
+//                clientDatagram();
 //                startAsyncLoadText(text);
+//                connectedTcp()
             }
         });
 
-        // AsyncTaskにするべきかも
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    DatagramSocket datagramSocket = new DatagramSocket(43210);
-//                    byte buffer[] = new byte[1024];
-//                    while (true) {
-//                        DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
-//                        datagramSocket.receive(datagramPacket);
-//                        str = new String(datagramPacket.getData(), "UTF-8");
-//                        System.out.println(str);
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                TextView textView = new TextView(getApplicationContext());
-//                                textView.setText(str);
-//                                textView.setTextColor(Color.BLACK);
-//                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
-//                                linearLayout.addView(textView);
-//                            }
-//                        });
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-
+//        serverDatagram();
 //        serverStartAsyncLoadText();
+        serverTcp();
+
+    }
+
+    public void serverTcp() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ServerSocket serverSocket = new ServerSocket(12345);
+                    while (true) {
+                        Socket socket = serverSocket.accept();
+                        OutputStream outputStream = socket.getOutputStream();
+                        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+                        dataOutputStream.writeInt(123456789);
+                        dataOutputStream.close();
+                    }
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+        }).start();
+    }
+
+    public void connectedTcp() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Socket socket = new Socket("153.169.8.162", 12345);
+                    InputStream inputStream = socket.getInputStream();
+                    DataInputStream dataInputStream = new DataInputStream(inputStream);
+                    int i = dataInputStream.readInt();
+                    System.out.println(i);
+                    dataInputStream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void clientDatagram() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    InetAddress inetAddress = InetAddress.getByName("153.169.8.162");
+                    DatagramSocket datagramSocket = new DatagramSocket();
+                    byte buffer[] = text.getBytes();
+                    DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, inetAddress, 4321);
+                    datagramSocket.send(datagramPacket);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void serverDatagram() {
+        // AsyncTaskにするべきかも
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DatagramSocket datagramSocket = new DatagramSocket(43210);
+                    byte buffer[] = new byte[1024];
+                    while (true) {
+                        DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
+                        datagramSocket.receive(datagramPacket);
+                        str = new String(datagramPacket.getData(), "UTF-8");
+                        System.out.println(str);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView textView = new TextView(getApplicationContext());
+                                textView.setText(str);
+                                textView.setTextColor(Color.BLACK);
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
+                                linearLayout.addView(textView);
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 
     public void serverStartAsyncLoadText() {
