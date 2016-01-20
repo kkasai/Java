@@ -77,8 +77,8 @@ public class DataActivity
 
 		// Please check this page. >> https://skyway.io/ds/
 		//Enter your API Key and registered Domain.
-		options.key = "e3585a60-9f61-4bc7-a146-7da471cf1d14";
-		options.domain = "localhost";
+		options.key = "";
+		options.domain = "";
 
 		// PeerOption has many options. Please check the document. >> http://nttcom.github.io/skyway/docs/
 

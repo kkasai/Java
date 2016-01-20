@@ -69,9 +69,9 @@ public class MediaActivity
 		PeerOption options = new PeerOption();
 
 		//Enter your API Key.
-		options.key = "e3585a60-9f61-4bc7-a146-7da471cf1d14";
+		options.key = "";
 		//Enter your registered Domain.
-		options.domain = "localhost";
+		options.domain = "";
 
 
 		// SKWPeer has many options. Please check the document. >> http://nttcom.github.io/skyway/docs/
