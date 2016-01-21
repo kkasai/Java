@@ -63,7 +63,7 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
 //        serverDatagram();
 //        serverStartAsyncLoadText();
 //        serverTcp();
-//        skyWaySample(peer);
+        skyWaySample(peer);
     }
 
     public void sendText(final Peer peer) {
@@ -117,6 +117,7 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                     @Override
                     public void onCallback(Object object) {
                         String strValue = null;
+                        System.out.println(object);
                         if (object instanceof String){
                             strValue = (String)object;
                             TextView textView = new TextView(getApplicationContext());
@@ -132,28 +133,29 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
 
             }
         });
-        DataConnection dataConnection = peer.connect("Android1");
-        dataConnection.on(DataConnection.DataEventEnum.OPEN, new OnCallback() {
-            @Override
-            public void onCallback(Object object) {
-                //
-            }
-        });
-        dataConnection.on(DataConnection.DataEventEnum.DATA, new OnCallback() {
-            @Override
-            public void onCallback(Object object) {
-                String strValue = null;
-                if (object instanceof String){
-                    strValue = (String)object;
-                    TextView textView = new TextView(getApplicationContext());
-                    textView.setText(strValue);
-                    textView.setTextColor(Color.BLACK);
-                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
-                    linearLayout.addView(textView);
-                }
-            }
-        });
-        dataConnection.send("Hello SkyWay!");
+//        DataConnection dataConnection = peer.connect("Android1");
+//        dataConnection.on(DataConnection.DataEventEnum.OPEN, new OnCallback() {
+//            @Override
+//            public void onCallback(Object object) {
+//                //
+//            }
+//        });
+//        dataConnection.on(DataConnection.DataEventEnum.DATA, new OnCallback() {
+//            @Override
+//            public void onCallback(Object object) {
+//                String strValue = null;
+//                if (object instanceof String){
+//                    strValue = (String)object;
+//                    TextView textView = new TextView(getApplicationContext());
+//                    textView.setText(strValue);
+//                    textView.setTextColor(Color.BLACK);
+//                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
+//                    linearLayout.addView(textView);
+//                }
+//            }
+//        });
+//        dataConnection.send("Hello SkyWay!");
+
 
 //        peer.listAllPeers(new OnCallback() {
 //            @Override
