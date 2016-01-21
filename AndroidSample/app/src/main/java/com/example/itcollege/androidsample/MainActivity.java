@@ -1,14 +1,21 @@
 package com.example.itcollege.androidsample;
 
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.view.View;
 import android.widget.*;
 
+import org.json.JSONArray;
+
 import java.io.*;
 import java.net.*;
+import io.skyway.Peer.*;
+
+import static io.skyway.Peer.DataConnection.DataEventEnum.DATA;
 
 public class MainActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<String> {
     int i = 0;
@@ -43,8 +50,91 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
 
 //        serverDatagram();
 //        serverStartAsyncLoadText();
-        serverTcp();
+//        serverTcp();
+        skyWaySample();
 
+    }
+
+    public void skyWaySample() {
+        PeerOption options = new PeerOption();
+
+        options.key = "e3585a60-9f61-4bc7-a146-7da471cf1d14";
+        options.domain = "localhost";
+
+//        final Peer peer = new Peer(getApplicationContext(), options);
+        final Peer peer = new Peer(getApplicationContext(), "Android", options);
+
+        peer.on(Peer.PeerEventEnum.OPEN, new OnCallback() {
+            @Override
+            public void onCallback(Object object) {
+                if (object instanceof String) {
+                    final String id = (String) object;
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView textView = new TextView(getApplicationContext());
+                            textView.setText(id);
+                            textView.setTextColor(Color.BLACK);
+                            LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
+                            linearLayout.addView(textView);
+                        }
+                    });
+                }
+
+                final DataConnection dataConnection = peer.connect("PC");
+                dataConnection.on(DataConnection.DataEventEnum.DATA, new OnCallback() {
+                    @Override
+                    public void onCallback(Object object) {
+                        dataConnection.send("Hello SkyWay!");
+                    }
+                });
+            }
+        });
+//        peer.listAllPeers(new OnCallback() {
+//            @Override
+//            public void onCallback(Object object) {
+//                JSONArray peers = (JSONArray) object;
+//                StringBuilder sbItems = new StringBuilder();
+//                for (int i = 0; peers.length() > i; i++) {
+//                    String strValue = "";
+//                    try {
+//                        strValue = peers.getString(i);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    if (0 == _id.compareToIgnoreCase(strValue)) {
+//                        continue;
+//                    }
+//
+//                    if (0 < sbItems.length()) {
+//                        sbItems.append(",");
+//                    }
+//
+//                    sbItems.append(strValue);
+//                }
+//            }
+//        });
+        peer.on(Peer.PeerEventEnum.CONNECTION, new OnCallback() {
+            @Override
+            public void onCallback(Object object) {
+                DataConnection data = (DataConnection) object;
+                data.on(DataConnection.DataEventEnum.DATA, new OnCallback() {
+                    @Override
+                    public void onCallback(Object object) {
+                        String strValue = null;
+                        if (object instanceof String){
+                            strValue = (String)object;
+                            TextView textView = new TextView(getApplicationContext());
+                            textView.setText(strValue);
+                            textView.setTextColor(Color.BLACK);
+                            LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
+                            linearLayout.addView(textView);
+                        }
+                    }
+                });
+            }
+        });
     }
 
     public void serverTcp() {
