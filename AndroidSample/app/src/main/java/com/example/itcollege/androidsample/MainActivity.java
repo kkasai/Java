@@ -27,6 +27,17 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ///////////////////////////////
+        PeerOption options = new PeerOption();
+
+        options.key = "e3585a60-9f61-4bc7-a146-7da471cf1d14";
+        options.domain = "localhost";
+
+//        final Peer peer = new Peer(getApplicationContext(), options);
+        Peer peer = new Peer(getApplicationContext(), "Android1", options);
+//        Peer peer2 = new Peer(getApplicationContext(), "Android2", options);
+        ////////////////////////////////
+
         Button submitButton = (Button) findViewById(R.id.submit);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,25 +56,32 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
 //                clientDatagram();
 //                startAsyncLoadText(text);
 //                connectedTcp()
+//                sendText(peer);
             }
         });
 
 //        serverDatagram();
 //        serverStartAsyncLoadText();
 //        serverTcp();
-        skyWaySample();
-
+//        skyWaySample(peer);
     }
 
-    public void skyWaySample() {
-        PeerOption options = new PeerOption();
+    public void sendText(final Peer peer) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final DataConnection dataConnection = peer.connect("Android1");
+                dataConnection.on(DataConnection.DataEventEnum.DATA, new OnCallback() {
+                    @Override
+                    public void onCallback(Object object) {
+                    }
+                    boolean bResult = dataConnection.send("Hello SkyWay!");
+                });
+            }
+        });
+    }
 
-        options.key = "e3585a60-9f61-4bc7-a146-7da471cf1d14";
-        options.domain = "localhost";
-
-//        final Peer peer = new Peer(getApplicationContext(), options);
-        final Peer peer = new Peer(getApplicationContext(), "Android", options);
-
+    public void skyWaySample(Peer peer) {
         peer.on(Peer.PeerEventEnum.OPEN, new OnCallback() {
             @Override
             public void onCallback(Object object) {
@@ -80,16 +98,63 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                         }
                     });
                 }
-
-                final DataConnection dataConnection = peer.connect("PC");
-                dataConnection.on(DataConnection.DataEventEnum.DATA, new OnCallback() {
-                    @Override
-                    public void onCallback(Object object) {
-                        dataConnection.send("Hello SkyWay!");
-                    }
-                });
             }
         });
+        peer.on(Peer.PeerEventEnum.CONNECTION, new OnCallback() {
+            @Override
+            public void onCallback(Object object) {
+                if (!(object instanceof DataConnection)) {
+                    return;
+                }
+                DataConnection data = (DataConnection) object;
+                data.on(DataConnection.DataEventEnum.OPEN, new OnCallback() {
+                    @Override
+                    public void onCallback(Object object) {
+                        //
+                    }
+                });
+                data.on(DataConnection.DataEventEnum.DATA, new OnCallback() {
+                    @Override
+                    public void onCallback(Object object) {
+                        String strValue = null;
+                        if (object instanceof String){
+                            strValue = (String)object;
+                            TextView textView = new TextView(getApplicationContext());
+                            textView.setText(strValue);
+                            textView.setTextColor(Color.BLACK);
+                            LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
+                            linearLayout.addView(textView);
+                        }
+                    }
+                });
+                //送信？
+//                data.send("Hello SkyWay!");
+
+            }
+        });
+        DataConnection dataConnection = peer.connect("Android1");
+        dataConnection.on(DataConnection.DataEventEnum.OPEN, new OnCallback() {
+            @Override
+            public void onCallback(Object object) {
+                //
+            }
+        });
+        dataConnection.on(DataConnection.DataEventEnum.DATA, new OnCallback() {
+            @Override
+            public void onCallback(Object object) {
+                String strValue = null;
+                if (object instanceof String){
+                    strValue = (String)object;
+                    TextView textView = new TextView(getApplicationContext());
+                    textView.setText(strValue);
+                    textView.setTextColor(Color.BLACK);
+                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
+                    linearLayout.addView(textView);
+                }
+            }
+        });
+        dataConnection.send("Hello SkyWay!");
+
 //        peer.listAllPeers(new OnCallback() {
 //            @Override
 //            public void onCallback(Object object) {
@@ -115,26 +180,6 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
 //                }
 //            }
 //        });
-        peer.on(Peer.PeerEventEnum.CONNECTION, new OnCallback() {
-            @Override
-            public void onCallback(Object object) {
-                DataConnection data = (DataConnection) object;
-                data.on(DataConnection.DataEventEnum.DATA, new OnCallback() {
-                    @Override
-                    public void onCallback(Object object) {
-                        String strValue = null;
-                        if (object instanceof String){
-                            strValue = (String)object;
-                            TextView textView = new TextView(getApplicationContext());
-                            textView.setText(strValue);
-                            textView.setTextColor(Color.BLACK);
-                            LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
-                            linearLayout.addView(textView);
-                        }
-                    }
-                });
-            }
-        });
     }
 
     public void serverTcp() {
