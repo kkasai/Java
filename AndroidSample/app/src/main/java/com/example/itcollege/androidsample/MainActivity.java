@@ -21,6 +21,9 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
     int i = 0;
     String text = "";
     String str = "";
+    Handler _handler;
+    Peer _peer;
+    DataConnection _data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,13 +31,16 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
         setContentView(R.layout.activity_main);
 
         ///////////////////////////////
+        _handler = new Handler(Looper.getMainLooper());
+
         PeerOption options = new PeerOption();
 
         options.key = "e3585a60-9f61-4bc7-a146-7da471cf1d14";
         options.domain = "localhost";
 
 //        final Peer peer = new Peer(getApplicationContext(), options);
-        Peer peer = new Peer(getApplicationContext(), "Android1", options);
+//        final Peer peer = new Peer(getApplicationContext(), "Android1", options);
+        _peer = new Peer(getApplicationContext(), "Android1", options);
 //        Peer peer2 = new Peer(getApplicationContext(), "Android2", options);
         ////////////////////////////////
 
@@ -57,32 +63,56 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
 //                startAsyncLoadText(text);
 //                connectedTcp()
 //                sendText(peer);
+                boolean bResult = _data.send("Hello SkyWay!");
+                System.out.println(bResult);
+            }
+        });
+
+        Button connectButton = (Button) findViewById(R.id.connect);
+        connectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                connect();
             }
         });
 
 //        serverDatagram();
 //        serverStartAsyncLoadText();
 //        serverTcp();
-        skyWaySample(peer);
+        skyWaySample();
+    }
+
+    private void connect() {
+        System.out.println("aaaaa");
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                ConnectOption option = new ConnectOption();
+                option.serialization = DataConnection.SerializationEnum.BINARY;
+                _data = _peer.connect("Android2", option);
+                System.out.println("bbbbb");
+            }
+        });
+
     }
 
     public void sendText(final Peer peer) {
-        new Thread(new Runnable() {
+        System.out.println("aaaaa");
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                final DataConnection dataConnection = peer.connect("Android1");
-                dataConnection.on(DataConnection.DataEventEnum.DATA, new OnCallback() {
-                    @Override
-                    public void onCallback(Object object) {
-                    }
-                    boolean bResult = dataConnection.send("Hello SkyWay!");
-                });
+                ConnectOption option = new ConnectOption();
+                option.serialization = DataConnection.SerializationEnum.BINARY;
+                DataConnection dataConnection = peer.connect("Android2", option);
+                System.out.println("bbbbb");
+//                boolean bResult = dataConnection.send("Hello SkyWay!");
+//                System.out.println(bResult);
             }
         });
     }
 
-    public void skyWaySample(Peer peer) {
-        peer.on(Peer.PeerEventEnum.OPEN, new OnCallback() {
+    public void skyWaySample() {
+        _peer.on(Peer.PeerEventEnum.OPEN, new OnCallback() {
             @Override
             public void onCallback(Object object) {
                 if (object instanceof String) {
@@ -100,7 +130,7 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                 }
             }
         });
-        peer.on(Peer.PeerEventEnum.CONNECTION, new OnCallback() {
+        _peer.on(Peer.PeerEventEnum.CONNECTION, new OnCallback() {
             @Override
             public void onCallback(Object object) {
                 if (!(object instanceof DataConnection)) {
@@ -116,20 +146,45 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                 data.on(DataConnection.DataEventEnum.DATA, new OnCallback() {
                     @Override
                     public void onCallback(Object object) {
-                        String strValue = null;
+//                        String strValue = null;
                         System.out.println(object);
                         if (object instanceof String){
-                            strValue = (String)object;
-                            TextView textView = new TextView(getApplicationContext());
-                            textView.setText(strValue);
-                            textView.setTextColor(Color.BLACK);
-                            LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
-                            linearLayout.addView(textView);
+                            final String strValue = (String)object;
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    TextView textView = new TextView(getApplicationContext());
+                                    textView.setText(strValue);
+                                    textView.setTextColor(Color.BLACK);
+                                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
+                                    linearLayout.addView(textView);
+                                }
+                            });
                         }
                     }
                 });
                 //送信？
 //                data.send("Hello SkyWay!");
+                _data.on(DataConnection.DataEventEnum.DATA, new OnCallback() {
+                    @Override
+                    public void onCallback(Object object) {
+//                        String strValue = null;
+                        System.out.println(object);
+                        if (object instanceof String){
+                            final String strValue = (String)object;
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    TextView textView = new TextView(getApplicationContext());
+                                    textView.setText(strValue);
+                                    textView.setTextColor(Color.BLACK);
+                                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content);
+                                    linearLayout.addView(textView);
+                                }
+                            });
+                        }
+                    }
+                });
 
             }
         });
