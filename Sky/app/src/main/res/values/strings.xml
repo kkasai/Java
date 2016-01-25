@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Sky</string>
+    <string name="headTextView">TextView</string>
+    <string name="submit">送信</string>
 </resources>
